@@ -267,7 +267,6 @@ def firstWikiLink(article_json):
 
             if page_url == "":
                 if most_repeat != 0:
-                    print('LA TROISIEME RECHERCHE EST: ' + str_final_keyword)
                     wikiKeywords = str_final_keyword
                     str_final_keyword = str(final_keyword)
                     wikiLinkResponse = wikiLink(str_final_keyword, language)
