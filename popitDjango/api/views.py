@@ -14,17 +14,16 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import re
 from nltk.tokenize import RegexpTokenizer
-#from stopwords import get_stopwords
 from nltk.corpus import stopwords
 import wikipedia
 from api.functions import wikiLink, getStopWord
+from langdetect import detect
 
 
 @api_view(["POST"])
 def firstWikiLink(article_json):
     try:
-        embedly_url=json.loads(article_json.body)
-        #r = str(embedly_url)
+        embedly_url=json.loads(article_json.body.decode('utf-8'))
         
         page_url = ''
         page_links = ''
@@ -34,8 +33,11 @@ def firstWikiLink(article_json):
         page_categories = ''
         check = True
         wikiKeywords = ''
+        lst_wikiKeywords = []
+        lst_youtubeKeywords = []
         
         contenu = embedly_url['content']
+        
         description = embedly_url['description']
         title = embedly_url['title']
         org_url = embedly_url['original_url']
@@ -44,7 +46,8 @@ def firstWikiLink(article_json):
             check = False
             
         if check == True:
-
+            
+            lang = detect(contenu)
             print('Le titre : ' + title)
             print('La description : ' + description)
 
@@ -53,9 +56,9 @@ def firstWikiLink(article_json):
 
             #Titre Majuscule
             tokens = tokenizer.tokenize(title)
-            lang = 'English'
+            
 
-            if lang == 'French':
+            if lang == 'fr':
                 fr_stop = getStopWord(lang)
                 language = 'fr'
             else:
@@ -233,8 +236,10 @@ def firstWikiLink(article_json):
 
             if most_repeat == 0:
                 str_final_keyword = str(keyword)
+                lst_youtubeKeywords = keyword
             else:
                 str_final_keyword = str(final_keyword)
+                lst_youtubeKeywords = final_keyword
 
 
             page_url = ''
@@ -246,7 +251,7 @@ def firstWikiLink(article_json):
             if first_research != '':
                 print('LA PREMIERE RECHERCHE EST: ' + str(first_research))
                 wikiKeywords = first_research
-                #first_research = str(first_research)
+                lst_wikiKeywords = lst_wordMostRepeat
                 wikiLinkResponse = wikiLink(first_research, language)
                 page_url = wikiLinkResponse[0]
                 page_sum = wikiLinkResponse[1]
@@ -258,6 +263,7 @@ def firstWikiLink(article_json):
                 if str_final_keyword != "":
                     print('LA DEUXIEME RECHERCHE EST: ' + str_final_keyword)
                     wikiKeywords = str_final_keyword
+                    lst_wikiKeywords = lst_youtubeKeywords
                     wikiLinkResponse = wikiLink(str_final_keyword, language)
                     page_url = wikiLinkResponse[0]
                     page_sum = wikiLinkResponse[1]
@@ -268,6 +274,7 @@ def firstWikiLink(article_json):
             if page_url == "":
                 if most_repeat != 0:
                     wikiKeywords = str_final_keyword
+                    lst_wikiKeywords = lst_youtubeKeywords
                     str_final_keyword = str(final_keyword)
                     wikiLinkResponse = wikiLink(str_final_keyword, language)
                     page_url = wikiLinkResponse[0]
@@ -278,13 +285,13 @@ def firstWikiLink(article_json):
 
         page_sum = page_sum[:550]
 
-        json_to_dumps = {'url': org_url, 'youtubeKeywords': str_final_keyword, 'wikiKeywords': wikiKeywords,'wikiURL': page_url, 'wikiSummary': page_sum, 'wikiSuggestion': page_links, 'wikiTitle': page_title, 'category': page_categories }
+        json_to_dumps = {'url': org_url, 'youtubeKeywords': lst_youtubeKeywords, 'wikiKeywords': lst_wikiKeywords,'wikiURL': page_url, 'wikiSummary': page_sum, 'wikiSuggestion': page_links, 'wikiTitle': page_title, 'category': page_categories }
 
         print(json_to_dumps)
 
         json_file = json.dumps(json_to_dumps)
 
-        return JsonResponse("The result is:" + json_file,safe=False)
+        return JsonResponse(json_file,safe=False)
 
     except ValueError as e:
         return Response(e.args[0],status.HTTP_400_BAD_REQUEST)
