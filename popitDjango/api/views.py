@@ -16,7 +16,7 @@ import re
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 import wikipedia
-from api.functions import wikiLink, getStopWord, firstMaj
+from api.functions import wikiLink, getStopWord
 from langdetect import detect
 
 
@@ -88,7 +88,8 @@ def firstWikiLink(article_json):
                         if m != lenDes:
                             word_split_space = word_split_dot[count_word_split_dot + 1].split(' ')
                             count_word_split_dot += 1
-                            lst_word_no_take.append(word_split_space[1])
+                            if len(word_split_space) > 1:
+                                lst_word_no_take.append(word_split_space[1])
                 
                 ############title
                 word_split_dot = title.split('.')
@@ -107,7 +108,8 @@ def firstWikiLink(article_json):
                         if m != title:
                             word_split_space = word_split_dot[count_word_split_dot + 1].split(' ')
                             count_word_split_dot += 1
-                            lst_word_no_take.append(word_split_space[1])
+                            if len(word_split_space) > 1:
+                                lst_word_no_take.append(word_split_space[1])
                 
                 
                 ##############################
@@ -132,15 +134,25 @@ def firstWikiLink(article_json):
                         if k.lower() != k:
                             for g in stopped_tokens_title[counter + 1]:
                                 if g.lower() != g:
-                                    lst_keyword.append(stopped_tokens_title[counter] + ' ' + stopped_tokens_title[counter + 1] + ';')
-                                    break
+                                    if counter < (i -2):
+                                        for v in stopped_tokens_title[counter + 2]:
+                                            if v.lower() != v:
+                                                lst_keyword.append(stopped_tokens_title[counter] + ' ' + stopped_tokens_title[counter + 1] + ' ' + stopped_tokens_title[counter + 2] + ';')
+                                                break
+                                            else:
+                                                lst_keyword.append(stopped_tokens_title[counter] + ' ' + stopped_tokens_title[counter + 1] + ';')
+                                        break
+                                    else:
+                                        lst_keyword.append(stopped_tokens_title[counter] + ' ' + stopped_tokens_title[counter + 1] + ';')
+                                        break
                                 else:
                                     for wordFirstMaj in lst_word_no_take:
                                         if stopped_tokens_title[counter] == wordFirstMaj:
                                                 word_found = True
                                     if word_found == False:
-                                        lst_keyword.append(stopped_tokens_title[counter] + ';')
-                                        break
+                                        if (stopped_tokens_title[counter]) != "I":
+                                            lst_keyword.append(stopped_tokens_title[counter] + ';')
+                                            break
                     counter = counter + 1
                     word_found = False
 
@@ -160,6 +172,17 @@ def firstWikiLink(article_json):
                         if k.lower() != k:
                             for g in stopped_tokens[counter + 1]:
                                 if g.lower() != g:
+                                    if counter < (i -2):
+                                        for v in stopped_tokens[counter + 2]:
+                                            if v.lower() != v:
+                                                lst_keyword.append(stopped_tokens[counter] + ' ' + stopped_tokens[counter + 1] + ' ' + stopped_tokens[counter + 2] + ';')
+                                                break
+                                            else:
+                                                lst_keyword.append(stopped_tokens[counter] + ' ' + stopped_tokens[counter + 1] + ';')
+                                        break
+                                    else:
+                                        lst_keyword.append(stopped_tokens[counter] + ' ' + stopped_tokens[counter + 1] + ';')
+                                        break
                                     lst_keyword.append(stopped_tokens[counter] + ' ' + stopped_tokens[counter + 1] + ';')
                                     break
                                 else:
@@ -167,9 +190,9 @@ def firstWikiLink(article_json):
                                         if stopped_tokens[counter] == wordFistMaj:
                                                 word_found = True
                                     if word_found == False:
-                                        print('Le mot a rajouter est 1: ' + stopped_tokens[counter])
-                                        lst_keyword.append(stopped_tokens[counter] + ';')
-                                        break
+                                            if (stopped_tokens[counter]) != "I":
+                                                lst_keyword.append(stopped_tokens[counter] + ';')
+                                                break
                                     word_found = False
                     counter = counter + 1
                     
@@ -212,7 +235,6 @@ def firstWikiLink(article_json):
                 for sentence in lst_keyword:
                     keyword = keyword + sentence
                     
-                print('La nouvelle liste de keyword est : ' + str(lst_keyword))
 
                 #Beautiful soup : compare into the content
                 cleanKeyword = ''
@@ -278,13 +300,14 @@ def firstWikiLink(article_json):
                             if len(lst_wordMostRepeat) > 0:
                                 del lst_wordMostRepeat[0]
                             if j > 1:
-
                                 print(j)
                                 print(str(word_split_final))
                                 if counter_final_split == 0:
                                     searched_word = searched_word + ' ' + word_split_final[1]
                                 if counter_final_split == 1:
                                     searched_word = word_split_final[0] + ' ' + searched_word
+                                if counter_final_split == 2:
+                                    searched_word = word_split_final[0] + ' ' + word_split_final[1] + ' ' + searched_word
                                 print('NOUVELLE REGLE: ' + searched_word)
                                 first_research = searched_word
                             lst_wordMostRepeat.append(searched_word)
@@ -365,7 +388,7 @@ def firstWikiLink(article_json):
                         page_categories = wikiLinkResponse[4]
 
 
-        page_sum = page_sum[:410]
+        page_sum = page_sum[:280]
 
         json_to_dumps = {'url': org_url, 'youtubeKeywords': lst_youtubeKeywords, 'wikiKeywords': lst_wikiKeywords,'wikiURL': page_url, 'wikiSummary': page_sum, 'wikiSuggestion': page_links, 'wikiTitle': page_title, 'category': page_categories }
 
