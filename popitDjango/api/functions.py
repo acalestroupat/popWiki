@@ -57,7 +57,7 @@ def getStopWord(lang):
     
     if lang == 'fr':
         fr_stop = set(stopwords.words('french'))
-        fr_stop = set("une comme la les un a en de du le est dans et au que d c pour des très Le s l L à Les il Il Ce ce qui Qui quoi Quoi As as Je je Tu il Il nous Nous vous Vous Ils ils de De Le le La la Je je".split())
+        fr_stop = set("une comme la les un a en de du le est dans et au que d c pour des très Le s l L à Les il Il Ce ce qui Qui quoi Quoi As as Je je Tu il Il nous Nous vous Vous Ils ils de De Le le La la Je je J j s S c C n N m M Après après sur Sur cette Cette".split())
         
     else:
         fr_stop = set(stopwords.words('english'))
