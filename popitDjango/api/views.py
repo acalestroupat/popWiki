@@ -388,7 +388,7 @@ def firstWikiLink(article_json):
                         page_categories = wikiLinkResponse[4]
 
 
-        page_sum = page_sum[:280]
+        page_sum = page_sum[:290]
 
         json_to_dumps = {'url': org_url, 'youtubeKeywords': lst_youtubeKeywords, 'wikiKeywords': lst_wikiKeywords,'wikiURL': page_url, 'wikiSummary': page_sum, 'wikiSuggestion': page_links, 'wikiTitle': page_title, 'category': page_categories }
 
