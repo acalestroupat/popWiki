@@ -43,7 +43,10 @@ def wikiLink(keyword, lang):
         page_title = ""
         page_categories = ""
     
+    split_title = page_title.split(' ')
     
+    #for title_word in split_title:
+    #    if title_word 
     
     lst_res.append(page_url)
     lst_res.append(page_sum)
@@ -57,10 +60,17 @@ def getStopWord(lang):
     
     if lang == 'fr':
         fr_stop = set(stopwords.words('french'))
-        fr_stop = set("une comme la les un a en de du le est dans et au que d c pour des très Le s l L à Les il Il Ce ce qui Qui quoi Quoi As as Je je Tu il Il nous Nous vous Vous Ils ils de De Le le La la Je je J j s S c C n N m M Après après sur Sur cette Cette ça".split())
+        fr_stop = set("une comme la les un a en de du le est dans et au que d c pour des très Le s l L à Les il Il Ce ce qui Qui quoi Quoi As as Je je Tu il Il nous Nous vous Vous Ils ils de De Le le La la Je je J j s S c C n N m M Après après sur Sur cette Cette ça Toutefois toutefois Selon selon".split())
         
     else:
         fr_stop = set(stopwords.words('english'))
-        fr_stop = set("The the is Is are Are do Do and And in In Why What what why Which which with With To to A a On on Of of s d t When when Even even Some some Can can That that January February March April May June July August September October November December Monday Tuesday Wednesday Thirsday Friday Saturday Sunday our my me mine could be for by he He We we did As as your you Your You In in How how these These".split())
+        fr_stop = set("The the is Is are Are do Do and And in In Why What what why Which which with With To to A a On on Of of s d t When when Even even Some some Can can That that January February March April May June July August September October November December Monday Tuesday Wednesday Thirsday Friday Saturday Sunday our my me mine could be for by he He We we did As as your you Your You In in How how these These I' I".split())
     
     return fr_stop
+
+def dict_politique():
+    
+    dict_politique = ['macron', 'trump', 'politique', 'francois hollande', 'republique', 'ministre', 'président', '']
+    dict_eco = ['brexit', 'banque', 'économies', 'économie', 'cac', 'bourse', 'inflation', 'croissance', 'krash', 'chômage', 'exportation', 'importation', 'pme', 'wall street']
+    
+    return "c'est le dictionnaire politique"
